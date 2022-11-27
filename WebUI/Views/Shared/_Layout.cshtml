@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - VkGraphBuilder</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"
+            integrity="sha512-XHDcSyqhOoO2ocB7sKOCJEkUjw/pQCJViP1ynpy+EGh/LggzrP6U/V3a++LQTnZT7sCQKeHRyWHfhN2afjXjCg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vivagraphjs/0.12.0/vivagraph.js"
+            integrity="sha512-3tTesD60C/wb78n0v+VF0gQmyhhx9HUhvqomOHjxU2cxdONsdVUszz+5eNGsU1G9NYv/HDLpJ/ysXQmet+Ot7A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="/DetailsPane.js"></script>
+    <script src="/NetworkGraph.js"></script>
+    <script src="/VkNodesLoader.js"></script>
+    <script src="/PageLocker.js"></script>
+
+    <link rel="stylesheet" href="/main.css"/>
+    <link rel="stylesheet" href="/Toolbar.css"/>
+    <link rel="stylesheet" href="/DetailsPane.css"/>
+    <link rel="stylesheet" href="/NetworkGraph.css"/>
+    <link rel="stylesheet" href="/PageLocker.css"/>
+</head>
+<body>
+
+<div id="graph" class="graph"></div>
+
+<div id="details" class="details">
+    <h2 id="selected_name"></h2>
+    <img id="selected_image"/>
+    <span id="selected_extras"></span>
+    <a id="link" class="link">Open ▲</a>
+
+    <button id="load_edges">Load edges</button>
+</div>
+
+<div id="toolbar" class="toolbar">
+    @await RenderSectionAsync("ToolbarContent")
+</div>
+
+<div id="page_locker" class="page_locker">
+    Loading...
+</div>
+
+@await RenderSectionAsync("Scripts", required: true)
+</body>
+
+</html>
