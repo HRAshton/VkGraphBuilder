@@ -83,12 +83,32 @@ class NetworkGraph {
         this.graph.endUpdate();
     }
 
-    getAllNodeIds() {
-        const nodes = [];
-        this.graph.forEachNode(node => {
-            nodes.push(node.id)
-        });
+    getNodesAndEdges() {
+        return {
+            nodes: this.getNodes(),
+            edges: this.getEdges(),
+        }
+    }
 
-        return nodes;
+    getAllNodeIds() {
+        return this.getNodes().map(node => node.id);
+    }
+
+    getNodes() {
+        return NetworkGraph._getListWithCallback(this.graph.forEachNode)
+            .map(nodeInfo => nodeInfo.data);
+    }
+
+    getEdges() {
+        return NetworkGraph._getListWithCallback(this.graph.forEachLink)
+            .map(edgeInfo => edgeInfo.data);
+    }
+
+    static _getListWithCallback(callback) {
+        const list = [];
+        callback(item => {
+            list.push(item)
+        });
+        return list;
     }
 }

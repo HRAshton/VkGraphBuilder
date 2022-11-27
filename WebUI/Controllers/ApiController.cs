@@ -13,7 +13,9 @@ namespace VkGraphBuilder.WebUI.Controllers
     {
         private readonly ILogger<VkApiController> logger;
 
-        public VkApiController(ILogger<VkApiController> logger, CachedVkApiClient cachedVkApiClient)
+        public VkApiController(
+            ILogger<VkApiController> logger,
+            CachedVkApiClient cachedVkApiClient)
         {
             this.logger = logger;
             CachedVkApiClient = cachedVkApiClient;
@@ -78,6 +80,12 @@ namespace VkGraphBuilder.WebUI.Controllers
                 Node = node,
                 Edges = edges,
             };
+        }
+
+        [HttpPost]
+        public Task<FileContentResult> Export(GraphModel graph)
+        {
+            return Task.FromResult(File(Array.Empty<byte>(), "ww.tgf"));
         }
     }
 }

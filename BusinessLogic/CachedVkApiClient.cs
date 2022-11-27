@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using VkNet.Enums.Filters;
@@ -20,11 +21,11 @@ namespace VkGraphBuilder.BusinessLogic
 
         private IDistributedCache DistributedCache { get; }
 
-        public async Task<User> Users_GetAsync(long userId)
+        public async Task<User> Users_GetAsync(long userId, CancellationToken cancellationToken = default)
         {
             var fetchingResult = await DistributedCache.GetOrAddArrayAsync(
                 $"{nameof(Users_GetAsync)}_{userId}",
-                async () =>
+                async _ =>
                 {
                     using var vkApi = await VkApiClientFactory.GetInstanceAsync();
 
@@ -33,16 +34,17 @@ namespace VkGraphBuilder.BusinessLogic
                         ProfileFields.City | ProfileFields.BirthDate | ProfileFields.Sex | ProfileFields.Photo200);
 
                     return users.ToArray();
-                });
+                },
+                cancellationToken);
 
             return fetchingResult.SingleOrDefault();
         }
 
-        public Task<User[]> Friends_GetAsync(long userId)
+        public Task<User[]> Friends_GetAsync(long userId, CancellationToken cancellationToken = default)
         {
             return DistributedCache.GetOrAddArrayAsync(
                 $"{nameof(Friends_GetAsync)}_{userId}",
-                async () =>
+                async _ =>
                 {
                     using var vkApi = await VkApiClientFactory.GetInstanceAsync();
 
@@ -56,16 +58,17 @@ namespace VkGraphBuilder.BusinessLogic
                     });
 
                     return users.ToArray();
-                });
+                },
+                cancellationToken);
         }
 
-        public async Task<Group> Groups_GetByIdAsync(long groupId)
+        public async Task<Group> Groups_GetByIdAsync(long groupId, CancellationToken cancellationToken = default)
         {
             groupId = -Math.Abs(groupId);
 
             var fetchingResult = await DistributedCache.GetOrAddArrayAsync(
                 $"{nameof(Groups_GetByIdAsync)}_{groupId}",
-                async () =>
+                async _ =>
                 {
                     using var vkApi = await VkApiClientFactory.GetInstanceAsync();
 
@@ -75,25 +78,27 @@ namespace VkGraphBuilder.BusinessLogic
                         GroupsFields.StartDate | GroupsFields.CityId | GroupsFields.MembersCount);
 
                     return result.ToArray();
-                });
+                },
+                cancellationToken);
 
             return fetchingResult.SingleOrDefault();
         }
 
-        public Task<User[]> Groups_GetAllMembersAsync(long groupId)
+        public Task<User[]> Groups_GetAllMembersAsync(long groupId, CancellationToken cancellationToken = default)
         {
             groupId = Math.Abs(groupId);
 
             return DistributedCache.GetOrAddArrayAsync(
                 $"{nameof(Groups_GetAllMembersAsync)}_{groupId}",
-                async () =>
+                async _ =>
                 {
                     using var vkApi = await VkApiClientFactory.GetInstanceAsync();
 
                     var users = await vkApi.Groups.GetAllMembersAsync(groupId.ToString());
 
                     return users.ToArray();
-                });
+                },
+                cancellationToken);
         }
     }
 }

@@ -6,6 +6,10 @@ namespace VkGraphBuilder.BusinessLogic
     [Serializable]
     public class NodeModel
     {
+        public NodeModel()
+        {
+        }
+        
         public NodeModel(User userInfo)
         {
             Id = userInfo.Id;

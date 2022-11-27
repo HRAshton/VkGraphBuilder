@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
@@ -10,10 +11,11 @@ namespace VkGraphBuilder.BusinessLogic
         public static async Task<T[]> GetOrAddArrayAsync<T>(
             this IDistributedCache distributedCache,
             string key,
-            Func<Task<T[]>> factory)
+            Func<CancellationToken, Task<T[]>> factory,
+            CancellationToken cancellationToken = default)
             where T : class
         {
-            var value = await distributedCache.GetObjectAsync<T[]>(key);
+            var value = await distributedCache.GetObjectAsync<T[]>(key, cancellationToken);
             if (value is not null)
             {
                 return value;
@@ -21,7 +23,7 @@ namespace VkGraphBuilder.BusinessLogic
 
             try
             {
-                value = await factory();
+                value = await factory(cancellationToken);
             }
             catch
             {
@@ -30,15 +32,18 @@ namespace VkGraphBuilder.BusinessLogic
 
             value ??= Array.Empty<T>();
 
-            await distributedCache.SetObjectAsync(key, value);
+            await distributedCache.SetObjectAsync(key, value, cancellationToken);
 
             return value;
         }
 
-        private static async Task<T> GetObjectAsync<T>(this IDistributedCache distributedCache, string key)
+        public static async Task<T> GetObjectAsync<T>(
+            this IDistributedCache distributedCache,
+            string key,
+            CancellationToken cancellationToken = default)
             where T : class
         {
-            string serializedValue = await distributedCache.GetStringAsync(key);
+            string serializedValue = await distributedCache.GetStringAsync(key, cancellationToken);
             if (serializedValue is null)
             {
                 return null;
@@ -49,12 +54,16 @@ namespace VkGraphBuilder.BusinessLogic
             return value;
         }
 
-        private static async Task SetObjectAsync<T>(this IDistributedCache distributedCache, string key, T value)
+        public static async Task SetObjectAsync<T>(
+            this IDistributedCache distributedCache,
+            string key,
+            T value,
+            CancellationToken cancellationToken = default)
             where T : class
         {
             var serializedValue = JsonConvert.SerializeObject(value);
 
-            await distributedCache.SetStringAsync(key, serializedValue);
+            await distributedCache.SetStringAsync(key, serializedValue, token: cancellationToken);
         }
     }
 }

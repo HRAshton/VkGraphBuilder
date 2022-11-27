@@ -16,7 +16,7 @@
 
     <script src="/DetailsPane.js"></script>
     <script src="/NetworkGraph.js"></script>
-    <script src="/VkNodesLoader.js"></script>
+    <script src="/DataContext.js"></script>
     <script src="/PageLocker.js"></script>
 
     <link rel="stylesheet" href="/main.css"/>
@@ -40,6 +40,8 @@
 
 <div id="toolbar" class="toolbar">
     @await RenderSectionAsync("ToolbarContent")
+
+    <button id="export" class="export">Export graph</button>
 </div>
 
 <div id="page_locker" class="page_locker">

@@ -4,7 +4,7 @@ window.nodesWithLoadedEdges = new Set();
 const init = () => {
     const networkGraph = new NetworkGraph('graph');
     const detailsPane = new DetailsPane('details');
-    const vkNodesLoader = new VkNodesLoader();
+    const dataContext = new DataContext();
     const pageLocker = new PageLocker('page_locker');
 
     const setNodeDetails = (nodeId) => {
@@ -26,7 +26,7 @@ const init = () => {
                 pageLocker.lock();
 
                 const userId = document.querySelector('#node_id').value;
-                const user = await vkNodesLoader.loadUser(userId);
+                const user = await dataContext.loadUser(userId);
                 networkGraph.addNodes([user]);
 
                 pageLocker.unlock();
@@ -39,7 +39,7 @@ const init = () => {
                 pageLocker.lock();
 
                 const userId = window.selectedNodeId;
-                const friends = await vkNodesLoader.loadFriends(userId);
+                const friends = await dataContext.loadFriends(userId);
 
                 const edges = friends.map(user => ({
                     fromId: userId,
@@ -53,7 +53,17 @@ const init = () => {
                 setNodeDetails(userId);
                 pageLocker.unlock();
             }
-        )
+        );
+
+    document.querySelector(`#export`)
+        .addEventListener(
+            'click',
+            async () => {
+                const graph = networkGraph.getNodesAndEdges();
+                const exportId = await dataContext.uploadForExport(graph);
+                window.open(`/Export/Export?graphId=${exportId}`, "_blank");
+            }
+        );
 }
 
 window.addEventListener('load', init);

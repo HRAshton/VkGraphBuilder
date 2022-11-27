@@ -45,6 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="AnyAscii" Version="0.3.1" />
       <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.10" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>

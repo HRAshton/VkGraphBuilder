@@ -5,6 +5,10 @@ namespace VkGraphBuilder.BusinessLogic
     [Serializable]
     public class EdgeModel
     {
+        public EdgeModel()
+        {
+        }
+        
         public EdgeModel(long anyKey1, long anyKey2, uint weight = 1)
         {
             FromId = Math.Min(anyKey1, anyKey2);
