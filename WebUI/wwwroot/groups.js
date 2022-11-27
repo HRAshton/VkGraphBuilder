@@ -26,34 +26,15 @@ const init = () => {
                 pageLocker.lock();
 
                 const groupId = document.querySelector('#node_id').value;
-                const group = await vkNodesLoader.loadGroup(groupId);
-                networkGraph.addNodes([group]);
+                const neighbourGroupIds = networkGraph.getAllNodeIds();
+                const nodeWithEdges = await vkNodesLoader.loadGroup(groupId, neighbourGroupIds);
+                networkGraph.addNodes([nodeWithEdges.node]);
+                networkGraph.addEdges(nodeWithEdges.edges);
 
                 pageLocker.unlock();
             });
 
-    document.querySelector('#load_edges')
-        .addEventListener(
-            'click',
-            async () => {
-                pageLocker.lock();
-
-                const groupId = window.selectedNodeId;
-                const groups = await vkNodesLoader.loadNeighbourGroups(groupId);
-
-                const edges = groups.map(group => ({
-                    from: groupId,
-                    to: group.id,
-                }));
-
-                networkGraph.addNodes(groups);
-                networkGraph.addEdges(edges);
-                nodesWithLoadedEdges.add(groupId);
-
-                setNodeDetails(groupId);
-                pageLocker.unlock();
-            }
-        )
+    document.querySelector('#load_edges').style.display = "None"
 }
 
 window.addEventListener('load', init);

@@ -8,14 +8,14 @@ class VkNodesLoader {
         const fetchResult = await fetch(`/VkApi/GetFriends?userId=${userId}`);
         return fetchResult.json();
     }
-    
-    async loadGroup(groupId) {
-        const fetchResult = await fetch(`/VkApi/GetGroupInfo?groupId=${groupId}`);
-        return fetchResult.json();
-    }
-    
-    async loadNeighbourGroups(groupId) {
-        const fetchResult = await fetch(`/VkApi/GetNeighbourGroups?groupId=${groupId}`);
+
+    async loadGroup(groupId, neighbourGroupIds) {
+        let ids = "";
+        for (const id of neighbourGroupIds) {
+            ids += `&neighbourGroupIds=${id}`
+        }
+
+        const fetchResult = await fetch(`/VkApi/GetGroupInfo?groupId=${groupId}&neighbourGroupIds=${ids}`);
         return fetchResult.json();
     }
 }

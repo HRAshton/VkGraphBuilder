@@ -42,8 +42,8 @@ const init = () => {
                 const friends = await vkNodesLoader.loadFriends(userId);
 
                 const edges = friends.map(user => ({
-                    from: userId,
-                    to: user.id,
+                    fromId: userId,
+                    toId: user.id,
                 }));
 
                 networkGraph.addNodes(friends);

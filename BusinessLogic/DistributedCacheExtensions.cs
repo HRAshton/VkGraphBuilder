@@ -7,13 +7,13 @@ namespace VkGraphBuilder.BusinessLogic
 {
     public static class DistributedCacheExtensions
     {
-        public static async Task<T> GetOrAddAsync<T>(
+        public static async Task<T[]> GetOrAddArrayAsync<T>(
             this IDistributedCache distributedCache,
             string key,
-            Func<Task<T>> factory)
+            Func<Task<T[]>> factory)
             where T : class
         {
-            var value = await distributedCache.GetObjectAsync<T>(key);
+            var value = await distributedCache.GetObjectAsync<T[]>(key);
             if (value is not null)
             {
                 return value;
@@ -25,15 +25,17 @@ namespace VkGraphBuilder.BusinessLogic
             }
             catch
             {
-                value = null;
+                // pass
             }
+
+            value ??= Array.Empty<T>();
 
             await distributedCache.SetObjectAsync(key, value);
 
             return value;
         }
 
-        public static async Task<T> GetObjectAsync<T>(this IDistributedCache distributedCache, string key)
+        private static async Task<T> GetObjectAsync<T>(this IDistributedCache distributedCache, string key)
             where T : class
         {
             string serializedValue = await distributedCache.GetStringAsync(key);
@@ -47,7 +49,7 @@ namespace VkGraphBuilder.BusinessLogic
             return value;
         }
 
-        public static async Task SetObjectAsync<T>(this IDistributedCache distributedCache, string key, T value)
+        private static async Task SetObjectAsync<T>(this IDistributedCache distributedCache, string key, T value)
             where T : class
         {
             var serializedValue = JsonConvert.SerializeObject(value);

@@ -6,6 +6,7 @@
         <Product>VkGraphBuilder.BusinessLogic</Product>
         <AssemblyName>VkGraphBuilder.BusinessLogic</AssemblyName>
         <RootNamespace>VkGraphBuilder.BusinessLogic</RootNamespace>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
