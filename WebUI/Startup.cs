@@ -21,11 +21,7 @@ namespace VkGraphBuilder.WebUI
         {
             services.AddControllersWithViews();
 
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = Configuration.GetConnectionString("Redis");
-                options.InstanceName = "Cache";
-            });
+            services.AddDistributedMemoryCache();
 
             services.AddSingleton<VkApiClientFactory>();
             services.AddSingleton<CachedVkApiClient>();
