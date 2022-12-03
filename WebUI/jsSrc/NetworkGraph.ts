@@ -3,7 +3,7 @@ import {EdgeModel, GraphModel, guid, NodeModel, VivaGraphInstance, VivaGraphNode
 const Viva = window.Viva;
 
 export class NetworkGraph {
-    constructor(containerId: guid) {
+    constructor(containerId: guid, onNodeClick: (node: VivaGraphNode<NodeModel, guid>) => void) {
         const container: HTMLElement = document.getElementById(containerId);
 
         this.graph = Viva.Graph.graph();
@@ -15,7 +15,7 @@ export class NetworkGraph {
                 .attr("height", 10)
                 .attr("fill", "#00a2e8");
 
-            ui.addEventListener('click', () => this.onSelect(node));
+            ui.addEventListener('click', () => onNodeClick(node));
 
             return ui;
         });

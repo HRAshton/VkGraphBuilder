@@ -1,56 +1,47 @@
-﻿import {NetworkGraph} from "./NetworkGraph";
-import {DataContext} from "./DataContext";
-import {DetailsPane} from "./DetailsPane";
-import {PageLocker} from "./PageLocker";
-import {GraphExporter} from "./GraphExporter";
-
-window.selectedNodeId = undefined;
-window.nodesWithLoadedEdges = new Set();
+﻿import {EdgeModel, guid, NodeModel} from "./index";
+import {VkGraphBuilder} from "./vkGraphBuilder";
 
 const init = () => {
-    const networkGraph = new NetworkGraph('graph');
-    const detailsPane = new DetailsPane('details');
-    const dataContext = new DataContext();
-    const pageLocker = new PageLocker('page_locker');
-    const graphExporter = new GraphExporter();
+    class GroupPage extends VkGraphBuilder {
+        constructor() {
+            super();
 
-    const setNodeDetails = (nodeId) => {
-        const item = networkGraph.getNodeById(nodeId);
-        const allowLoad = !window.nodesWithLoadedEdges.has(nodeId);
+            document.querySelector<HTMLButtonElement>('#load_edges').style.display = "None";
+        }
 
-        window.selectedNodeId = nodeId;
-        detailsPane.setData(item.data, allowLoad);
-    };
+        protected async onLoadEdgesClick(): Promise<void> {
+            this.pageLocker.lock();
 
-    networkGraph.setEventHandler(node => {
-        setNodeDetails(node.id);
-    });
+            const userId: guid = window.selectedNodeId;
+            const friends: NodeModel[] = await this.dataContext.loadFriends(userId);
 
-    document.querySelector('#add_nodes')
-        .addEventListener(
-            'click',
-            async () => {
-                pageLocker.lock();
+            const edges: EdgeModel[] = friends.map(user => ({
+                fromId: userId,
+                toId: user.id,
+            }));
 
-                const groupId = document.querySelector<HTMLInputElement>('#node_id').value;
-                const neighbourGroupIds = networkGraph.getAllNodeIds();
-                const nodeWithEdges = await dataContext.loadGroup(groupId, neighbourGroupIds);
-                networkGraph.addNodes([nodeWithEdges.node]);
-                networkGraph.addEdges(nodeWithEdges.edges);
+            this.networkGraph.addNodes(friends);
+            this.networkGraph.addEdges(edges);
+            window.nodesWithLoadedEdges.add(userId);
 
-                pageLocker.unlock();
-            });
+            this.setNodeDetails(userId);
+            this.pageLocker.unlock();
+        }
 
-    document.querySelector<HTMLButtonElement>('#load_edges').style.display = "None";
+        protected async onAddNodeClick(): Promise<void> {
+            this.pageLocker.lock();
 
-    document.querySelector(`#export`)
-        .addEventListener(
-            'click',
-            async () => {
-                const graph = networkGraph.getNodesAndEdges();
-                graphExporter.export(graph);
-            }
-        );
+            const groupId = document.querySelector<HTMLInputElement>('#node_id').value;
+            const neighbourGroupIds = this.networkGraph.getAllNodeIds();
+            const nodeWithEdges = await this.dataContext.loadGroup(groupId, neighbourGroupIds);
+            this.networkGraph.addNodes([nodeWithEdges.node]);
+            this.networkGraph.addEdges(nodeWithEdges.edges);
+
+            this.pageLocker.unlock();
+        }
+    }
+
+    new GroupPage().init();
 }
 
 window.addEventListener('load', init);

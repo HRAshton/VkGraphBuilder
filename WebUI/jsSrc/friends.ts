@@ -1,76 +1,46 @@
 import {EdgeModel, guid, NodeModel} from "./index";
-import {DetailsPane} from "./DetailsPane";
-import {NetworkGraph} from "./NetworkGraph";
-import {DataContext} from "./DataContext";
-import {PageLocker} from "./PageLocker";
-import {GraphExporter} from "./GraphExporter";
+import {VkGraphBuilder} from "./vkGraphBuilder";
 
 window.selectedNodeId = undefined;
 window.nodesWithLoadedEdges = new Set<guid>();
 
 const init = () => {
-    const networkGraph = new NetworkGraph('graph');
-    const detailsPane = new DetailsPane('details');
-    const dataContext = new DataContext();
-    const pageLocker = new PageLocker('page_locker');
-    const graphExporter = new GraphExporter();
+    class FriendsPage extends VkGraphBuilder {
+        constructor() {
+            super();
+        }
 
-    const setNodeDetails = (nodeId) => {
-        const item = networkGraph.getNodeById(nodeId);
-        const allowLoad = !window.nodesWithLoadedEdges.has(nodeId);
+        protected async onLoadEdgesClick(): Promise<void> {
+            this.pageLocker.lock();
 
-        window.selectedNodeId = nodeId;
-        detailsPane.setData(item.data, allowLoad);
-    };
+            const userId: guid = window.selectedNodeId;
+            const friends: NodeModel[] = await this.dataContext.loadFriends(userId);
 
-    networkGraph.setEventHandler(node => {
-        setNodeDetails(node.id);
-    });
+            const edges: EdgeModel[] = friends.map(user => ({
+                fromId: userId,
+                toId: user.id,
+            }));
 
-    document.querySelector('#add_nodes')
-        .addEventListener(
-            'click',
-            async () => {
-                pageLocker.lock();
+            this.networkGraph.addNodes(friends);
+            this.networkGraph.addEdges(edges);
+            window.nodesWithLoadedEdges.add(userId);
 
-                const userId = document.querySelector<HTMLInputElement>('#node_id').value;
-                const user = await dataContext.loadUser(userId);
-                networkGraph.addNodes([user]);
+            this.setNodeDetails(userId);
+            this.pageLocker.unlock();
+        }
 
-                pageLocker.unlock();
-            });
+        protected async onAddNodeClick(): Promise<void> {
+            this.pageLocker.lock();
 
-    document.querySelector('#load_edges')
-        .addEventListener(
-            'click',
-            async () => {
-                pageLocker.lock();
+            const userId = document.querySelector<HTMLInputElement>('#node_id').value;
+            const user = await this.dataContext.loadUser(userId);
+            this.networkGraph.addNodes([user]);
 
-                const userId: guid = window.selectedNodeId;
-                const friends: NodeModel[] = await dataContext.loadFriends(userId);
+            this.pageLocker.unlock();
+        }
+    }
 
-                const edges: EdgeModel[] = friends.map(user => ({
-                    fromId: userId,
-                    toId: user.id,
-                }));
-
-                networkGraph.addNodes(friends);
-                networkGraph.addEdges(edges);
-                window.nodesWithLoadedEdges.add(userId);
-
-                setNodeDetails(userId);
-                pageLocker.unlock();
-            }
-        );
-
-    document.querySelector(`#export`)
-        .addEventListener(
-            'click',
-            async () => {
-                const graph = networkGraph.getNodesAndEdges();
-                graphExporter.export(graph);
-            }
-        );
+    new FriendsPage().init();
 }
 
 window.addEventListener('load', init);
