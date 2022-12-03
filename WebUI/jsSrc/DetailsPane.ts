@@ -1,6 +1,8 @@
-class DetailsPane {
-    constructor(containerId) {
-        this.detailsContainer = document.getElementById(containerId);
+import {NodeModel} from "./index";
+
+export class DetailsPane {
+    constructor(containerId: string) {
+        this.detailsContainer = document.getElementById(containerId) as HTMLDivElement;
 
         this.nameContainer = this.detailsContainer.querySelector('#selected_name');
         this.imageContainer = this.detailsContainer.querySelector('#selected_image');
@@ -8,17 +10,17 @@ class DetailsPane {
         this.linkContainer = this.detailsContainer.querySelector('#link');
         this.loadButton = this.detailsContainer.querySelector('#load_edges');
 
-        this.setData(undefined);
+        this.setData(undefined, false);
     }
 
-    detailsContainer = null;
-    nameContainer = null;
-    imageContainer = null;
-    extrasContainer = null;
-    linkContainer = null;
-    loadButton = null;
+    detailsContainer: HTMLDivElement = null;
+    nameContainer: HTMLElement = null;
+    imageContainer: HTMLImageElement = null;
+    extrasContainer: HTMLDivElement = null;
+    linkContainer: HTMLAnchorElement = null;
+    loadButton: HTMLButtonElement = null;
 
-    setData(data, allowLoad) {
+    setData(data: NodeModel, allowLoad: boolean): void {
         if (!data) {
             this.detailsContainer.classList.add('--hidden');
             return;

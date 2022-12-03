@@ -1,4 +1,10 @@
-﻿window.selectedNodeId = undefined;
+﻿import {NetworkGraph} from "./NetworkGraph";
+import {DataContext} from "./DataContext";
+import {DetailsPane} from "./DetailsPane";
+import {PageLocker} from "./PageLocker";
+import {GraphExporter} from "./GraphExporter";
+
+window.selectedNodeId = undefined;
 window.nodesWithLoadedEdges = new Set();
 
 const init = () => {
@@ -6,6 +12,7 @@ const init = () => {
     const detailsPane = new DetailsPane('details');
     const dataContext = new DataContext();
     const pageLocker = new PageLocker('page_locker');
+    const graphExporter = new GraphExporter();
 
     const setNodeDetails = (nodeId) => {
         const item = networkGraph.getNodeById(nodeId);
@@ -25,7 +32,7 @@ const init = () => {
             async () => {
                 pageLocker.lock();
 
-                const groupId = document.querySelector('#node_id').value;
+                const groupId = document.querySelector<HTMLInputElement>('#node_id').value;
                 const neighbourGroupIds = networkGraph.getAllNodeIds();
                 const nodeWithEdges = await dataContext.loadGroup(groupId, neighbourGroupIds);
                 networkGraph.addNodes([nodeWithEdges.node]);
@@ -34,20 +41,19 @@ const init = () => {
                 pageLocker.unlock();
             });
 
-    document.querySelector('#load_edges').style.display = "None";
+    document.querySelector<HTMLButtonElement>('#load_edges').style.display = "None";
 
     document.querySelector(`#export`)
         .addEventListener(
             'click',
             async () => {
                 const graph = networkGraph.getNodesAndEdges();
-                const exportId = await dataContext.uploadForExport(graph);
-                window.open(`/Export/Export?graphId=${exportId}`, "_blank");
+                graphExporter.export(graph);
             }
         );
 }
 
 window.addEventListener('load', init);
 window.addEventListener('load', async () => {
-    document.querySelector('#node_id').value = '-73332691';
+    document.querySelector<HTMLInputElement>('#node_id').value = '-73332691';
 });

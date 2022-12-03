@@ -1,11 +1,19 @@
+import {EdgeModel, guid, NodeModel} from "./index";
+import {DetailsPane} from "./DetailsPane";
+import {NetworkGraph} from "./NetworkGraph";
+import {DataContext} from "./DataContext";
+import {PageLocker} from "./PageLocker";
+import {GraphExporter} from "./GraphExporter";
+
 window.selectedNodeId = undefined;
-window.nodesWithLoadedEdges = new Set();
+window.nodesWithLoadedEdges = new Set<guid>();
 
 const init = () => {
     const networkGraph = new NetworkGraph('graph');
     const detailsPane = new DetailsPane('details');
     const dataContext = new DataContext();
     const pageLocker = new PageLocker('page_locker');
+    const graphExporter = new GraphExporter();
 
     const setNodeDetails = (nodeId) => {
         const item = networkGraph.getNodeById(nodeId);
@@ -25,7 +33,7 @@ const init = () => {
             async () => {
                 pageLocker.lock();
 
-                const userId = document.querySelector('#node_id').value;
+                const userId = document.querySelector<HTMLInputElement>('#node_id').value;
                 const user = await dataContext.loadUser(userId);
                 networkGraph.addNodes([user]);
 
@@ -38,17 +46,17 @@ const init = () => {
             async () => {
                 pageLocker.lock();
 
-                const userId = window.selectedNodeId;
-                const friends = await dataContext.loadFriends(userId);
+                const userId: guid = window.selectedNodeId;
+                const friends: NodeModel[] = await dataContext.loadFriends(userId);
 
-                const edges = friends.map(user => ({
+                const edges: EdgeModel[] = friends.map(user => ({
                     fromId: userId,
                     toId: user.id,
                 }));
 
                 networkGraph.addNodes(friends);
                 networkGraph.addEdges(edges);
-                nodesWithLoadedEdges.add(userId);
+                window.nodesWithLoadedEdges.add(userId);
 
                 setNodeDetails(userId);
                 pageLocker.unlock();
@@ -60,13 +68,12 @@ const init = () => {
             'click',
             async () => {
                 const graph = networkGraph.getNodesAndEdges();
-                const exportId = await dataContext.uploadForExport(graph);
-                window.open(`/Export/Export?graphId=${exportId}`, "_blank");
+                graphExporter.export(graph);
             }
         );
 }
 
 window.addEventListener('load', init);
 window.addEventListener('load', async () => {
-    document.querySelector('#node_id').value = '408065329';
+    document.querySelector<HTMLInputElement>('#node_id').value = '408065329';
 });

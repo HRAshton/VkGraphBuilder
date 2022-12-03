@@ -1,0 +1,28 @@
+{
+  "name": "vkgraphbuilder_v1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-watch": "webpack --config webpack.config.js --watch",
+    "build": "webpack --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HRAshton/VkGraphBuilder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HRAshton/VkGraphBuilder/issues"
+  },
+  "homepage": "https://github.com/HRAshton/VkGraphBuilder#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.0.0",
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.75.0"
+  }
+}

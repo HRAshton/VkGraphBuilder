@@ -1,11 +1,15 @@
-class NetworkGraph {
-    constructor(containerId) {
-        const container = document.getElementById(containerId);
+import {EdgeModel, GraphModel, guid, NodeModel, VivaGraphInstance, VivaGraphNode} from "./index";
+
+const Viva = window.Viva;
+
+export class NetworkGraph {
+    constructor(containerId: guid) {
+        const container: HTMLElement = document.getElementById(containerId);
 
         this.graph = Viva.Graph.graph();
         const graphics = Viva.Graph.View.svgGraphics();
 
-        graphics.node((node) => {
+        graphics.node((node: VivaGraphNode<NodeModel, guid>) => {
             const ui = Viva.Graph.svg("rect")
                 .attr("width", 10)
                 .attr("height", 10)
@@ -56,18 +60,18 @@ class NetworkGraph {
         renderer.run();
     }
 
-    graph = null;
-    onSelect = null;
+    graph: VivaGraphInstance<NodeModel, EdgeModel, guid> = null;
+    onSelect: (vivaNode: VivaGraphNode<NodeModel, guid>) => void = null;
 
-    setEventHandler(onSelect) {
+    setEventHandler(onSelect: (vivaNode: VivaGraphNode<NodeModel, guid>) => void): void {
         this.onSelect = onSelect;
     }
 
-    getNodeById(nodeId) {
+    getNodeById(nodeId: guid): VivaGraphNode<NodeModel, guid> {
         return this.graph.getNode(nodeId);
     }
 
-    addNodes(nodes) {
+    addNodes(nodes: NodeModel[]): void {
         this.graph.beginUpdate();
         for (const node of nodes) {
             this.graph.addNode(node.id, node);
@@ -75,7 +79,7 @@ class NetworkGraph {
         this.graph.endUpdate();
     }
 
-    addEdges(edges) {
+    addEdges(edges: EdgeModel[]): void {
         this.graph.beginUpdate();
         for (const edge of edges) {
             this.graph.addLink(edge.fromId, edge.toId, edge);
@@ -83,27 +87,28 @@ class NetworkGraph {
         this.graph.endUpdate();
     }
 
-    getNodesAndEdges() {
+    getNodesAndEdges(): GraphModel {
         return {
             nodes: this.getNodes(),
             edges: this.getEdges(),
         }
     }
 
-    getAllNodeIds() {
+    getAllNodeIds(): guid[] {
         return this.getNodes().map(node => node.id);
     }
 
-    getNodes() {
+    getNodes(): NodeModel[] {
         return NetworkGraph._getListWithCallback(this.graph.forEachNode)
             .map(nodeInfo => nodeInfo.data);
     }
 
-    getEdges() {
+    getEdges(): EdgeModel[] {
         return NetworkGraph._getListWithCallback(this.graph.forEachLink)
             .map(edgeInfo => edgeInfo.data);
     }
 
+    // todo: add typing
     static _getListWithCallback(callback) {
         const list = [];
         callback(item => {
