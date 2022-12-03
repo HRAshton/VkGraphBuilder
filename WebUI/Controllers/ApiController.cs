@@ -48,11 +48,10 @@ namespace VkGraphBuilder.WebUI.Controllers
             return nodes;
         }
 
-        public async Task<dynamic> GetGroupInfo(Guid groupId, Guid[] neighbourGroupIds)
+        public async Task<dynamic> GetGroupInfo(long groupId, Guid[] neighbourGroupIds)
         {
-            var realGroupId = GuidUtils.ToLong(groupId);
-            Group groupInfo = await CachedVkApiClient.Groups_GetByIdAsync(realGroupId);
-            User[] groupMembers = await CachedVkApiClient.Groups_GetAllMembersAsync(realGroupId);
+            Group groupInfo = await CachedVkApiClient.Groups_GetByIdAsync(groupId);
+            User[] groupMembers = await CachedVkApiClient.Groups_GetAllMembersAsync(groupId);
             HashSet<long> groupMemberIds = new(groupMembers.Select(user => user.Id));
 
             Dictionary<long, HashSet<long>> neighbourMemberIds = new();
