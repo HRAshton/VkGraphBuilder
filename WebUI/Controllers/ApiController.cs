@@ -36,9 +36,10 @@ namespace VkGraphBuilder.WebUI.Controllers
             return node;
         }
 
-        public async Task<NodeModel[]> GetFriends(long userId)
+        public async Task<NodeModel[]> GetFriends(Guid userId)
         {
-            var result = await CachedVkApiClient.Friends_GetAsync(userId);
+            var realUserId = GuidUtils.ToLong(userId);
+            var result = await CachedVkApiClient.Friends_GetAsync(realUserId);
 
             var nodes = result
                 .Select(userInfo => new NodeModel(userInfo))
@@ -47,14 +48,15 @@ namespace VkGraphBuilder.WebUI.Controllers
             return nodes;
         }
 
-        public async Task<dynamic> GetGroupInfo(long groupId, long[] neighbourGroupIds)
+        public async Task<dynamic> GetGroupInfo(Guid groupId, Guid[] neighbourGroupIds)
         {
-            Group groupInfo = await CachedVkApiClient.Groups_GetByIdAsync(groupId);
-            User[] groupMembers = await CachedVkApiClient.Groups_GetAllMembersAsync(groupId);
+            var realGroupId = GuidUtils.ToLong(groupId);
+            Group groupInfo = await CachedVkApiClient.Groups_GetByIdAsync(realGroupId);
+            User[] groupMembers = await CachedVkApiClient.Groups_GetAllMembersAsync(realGroupId);
             HashSet<long> groupMemberIds = new(groupMembers.Select(user => user.Id));
 
             Dictionary<long, HashSet<long>> neighbourMemberIds = new();
-            foreach (var neighbourGroupId in neighbourGroupIds)
+            foreach (var neighbourGroupId in neighbourGroupIds.Select(GuidUtils.ToLong))
             {
                 var neighbours = await CachedVkApiClient.Groups_GetAllMembersAsync(neighbourGroupId);
 
@@ -67,8 +69,8 @@ namespace VkGraphBuilder.WebUI.Controllers
 
             var edges = neighbourMemberIds
                 .Select(kvp => new EdgeModel(
-                    groupInfo.Id,
-                    kvp.Key,
+                    GuidUtils.ToGuid(groupInfo.Id),
+                    GuidUtils.ToGuid(kvp.Key),
                     (uint)groupMemberIds
                         .Intersect(kvp.Value)
                         .Count()))
@@ -80,12 +82,6 @@ namespace VkGraphBuilder.WebUI.Controllers
                 Node = node,
                 Edges = edges,
             };
-        }
-
-        [HttpPost]
-        public Task<FileContentResult> Export(GraphModel graph)
-        {
-            return Task.FromResult(File(Array.Empty<byte>(), "ww.tgf"));
         }
     }
 }

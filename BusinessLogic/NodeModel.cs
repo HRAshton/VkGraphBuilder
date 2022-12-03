@@ -12,7 +12,7 @@ namespace VkGraphBuilder.BusinessLogic
         
         public NodeModel(User userInfo)
         {
-            Id = userInfo.Id;
+            Id = GuidUtils.ToGuid(userInfo.Id);
             Name = userInfo.FirstName + " " + userInfo.LastName;
             ImageSrc = userInfo.Photo200.ToString();
             Extras = $"City: {userInfo.City?.Title}\n" +
@@ -23,7 +23,7 @@ namespace VkGraphBuilder.BusinessLogic
 
         public NodeModel(Group groupInfo)
         {
-            Id = groupInfo.Id;
+            Id = GuidUtils.ToGuid(groupInfo.Id);
             Name = groupInfo.Name;
             ImageSrc = groupInfo.Photo200?.ToString();
             Extras = $"City: {groupInfo.City?.Title}\n" +
@@ -32,7 +32,7 @@ namespace VkGraphBuilder.BusinessLogic
             Link = $"https://vk.com/club{Id}";
         }
 
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         
         public string Name { get; set; }
         

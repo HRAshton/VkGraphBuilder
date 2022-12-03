@@ -9,16 +9,17 @@ namespace VkGraphBuilder.BusinessLogic
         {
         }
         
-        public EdgeModel(long anyKey1, long anyKey2, uint weight = 1)
+        public EdgeModel(Guid anyKey1, Guid anyKey2, uint weight = 1)
         {
-            FromId = Math.Min(anyKey1, anyKey2);
-            ToId = Math.Max(anyKey1, anyKey2);
+            var (min, max) = GuidUtils.MinMax(anyKey1, anyKey2);
+            FromId = min;
+            ToId = max;
             Weight = weight;
         }
         
-        public long FromId { get; set; }
+        public Guid FromId { get; set; }
 
-        public long ToId { get; set; }
+        public Guid ToId { get; set; }
 
         public uint Weight { get; set; }
     }
