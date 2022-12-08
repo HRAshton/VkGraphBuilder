@@ -6,9 +6,7 @@ namespace VkGraphBuilder.BusinessLogic
     {
         public static Guid ToGuid(long value)
         {
-            var rnd = new Random();
             var guidData = new byte[16];
-            rnd.NextBytes(guidData);
 
             Array.Copy(BitConverter.GetBytes(value), guidData, 8);
             return new Guid(guidData);
