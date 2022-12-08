@@ -25,28 +25,27 @@ public class NetworkXWrapper
     {
         var exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
-        var activatePath = Path.Combine(exeDir, "venv/Scripts/activate.bat");
         var pythonPath = Path.Combine(exeDir, "venv/Scripts/python.exe");
         var scriptPath = Path.Combine(exeDir, "analyzer.py");
 
-        var cmdArgs = $"\"{activatePath} && {pythonPath} {scriptPath}\"";
-
+        var graphFilePath = Path.GetTempFileName();
+        await File.WriteAllTextAsync(graphFilePath, jsonEdges);
+        
         ProcessStartInfo start = new ()
         {
-            FileName = "cmd.exe",
-            Arguments = $"/c {cmdArgs}",
+            FileName = pythonPath,
+            Arguments = $"{scriptPath} {graphFilePath}",
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
         };
-        
-        start.EnvironmentVariables.Add("VKGRAPH_INPUT", jsonEdges);
 
         using var process = Process.Start(start);
         
         var result = await process.StandardOutput.ReadToEndAsync();
 
         process.Kill(true);
+        File.Delete(graphFilePath);
 
         if (result is null)
         {

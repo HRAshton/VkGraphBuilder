@@ -18,9 +18,10 @@ class EdgeModel:
         return obj
 
 
-def main() -> None:
-    import os
-    json_edges = os.environ['VKGRAPH_INPUT']
+def main(json_file_path: str) -> None:
+    json_edges: str = None
+    with open(json_file_path, 'r') as file:
+        json_edges = file.read()
 
     if len(json_edges) < 10:
         raise Exception('Unexpected length of args.')
@@ -45,4 +46,5 @@ def main() -> None:
     return
 
 
-main()
+import sys
+main(sys.argv[1])
