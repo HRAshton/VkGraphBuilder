@@ -81,3 +81,13 @@ export interface GraphModel {
 }
 
 export type guid = string;
+
+export interface AnalyzingResults {
+    degree?: Map<guid, number>;
+    degreeCentrality?: Map<guid, number>;
+    betweennessCentrality?: Map<guid, number>;
+    closenessCentrality?: Map<guid, number>;
+    eigenvectorCentrality?: Map<guid, number>;
+    katzCentrality?: Map<guid, number>;
+    harmonicCentrality?: Map<guid, number>;
+}

@@ -10,6 +10,16 @@
 
     display: flex;
     flex-direction: column;
+
+    width: 330px;
+}
+
+.details img {
+    max-width: 150px;
+}
+
+.details .node_analyzing_results {
+    font-family: monospace;
 }
 
 .details.--hidden {

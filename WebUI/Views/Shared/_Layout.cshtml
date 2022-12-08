@@ -26,9 +26,14 @@
 
 <div id="details" class="details">
     <h2 id="selected_name"></h2>
-    <img id="selected_image"/>
+    <img id="selected_image" class="selected_image" alt="avatar" src="data:"/>
     <span id="selected_extras"></span>
     <a id="link" class="link">Open ▲</a>
+    
+    <div>
+        <span>Analyzing results:</span>
+        <span id="node_analyzing_results" class="node_analyzing_results"></span>
+    </div>
 
     <button id="load_edges">Load edges</button>
 </div>
@@ -37,6 +42,7 @@
     @await RenderSectionAsync("ToolbarContent")
 
     <button id="export" class="export">Export graph</button>
+    <button id="statistics" class="statistics">Open statistics page</button>
 </div>
 
 <div id="page_locker" class="page_locker">

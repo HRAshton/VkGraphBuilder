@@ -25,6 +25,7 @@ namespace VkGraphBuilder.WebUI
 
             services.AddSingleton<VkApiClientFactory>();
             services.AddSingleton<CachedVkApiClient>();
+            services.AddSingleton<NetworkXWrapper.NetworkXWrapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
