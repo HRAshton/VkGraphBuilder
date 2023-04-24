@@ -11,7 +11,7 @@ export class DataContext {
         return fetchResult.json();
     }
 
-    async loadGroup(groupId: guid, neighbourGroupIds: guid[]): Promise<{ node: NodeModel, edges: EdgeModel[] }> {
+    async loadGroup(groupId: guid, neighbourGroupIds: guid[]): Promise<{ nodes: NodeModel[], edges: EdgeModel[] }> {
         let ids = "";
         for (const id of neighbourGroupIds) {
             ids += `&neighbourGroupIds=${id}`

@@ -10,22 +10,7 @@ const init = () => {
         }
 
         protected async onLoadEdgesClick(): Promise<void> {
-            this.pageLocker.lock();
-
-            const userId: guid = window.selectedNodeId;
-            const friends: NodeModel[] = await this.dataContext.loadFriends(userId);
-
-            const edges: EdgeModel[] = friends.map(user => ({
-                fromId: userId,
-                toId: user.id,
-            }));
-
-            this.networkGraph.addNodes(friends);
-            this.networkGraph.addEdges(edges);
-            window.nodesWithLoadedEdges.add(userId);
-
-            this.setNodeDetails(userId);
-            this.pageLocker.unlock();
+            throw new Error("Method not implemented.");
         }
 
         protected async onAddNodeClick(): Promise<void> {
@@ -34,7 +19,7 @@ const init = () => {
             const groupId = document.querySelector<HTMLInputElement>('#node_id').value;
             const neighbourGroupIds = this.networkGraph.getAllNodeIds();
             const nodeWithEdges = await this.dataContext.loadGroup(groupId, neighbourGroupIds);
-            this.networkGraph.addNodes([nodeWithEdges.node]);
+            this.networkGraph.addNodes(nodeWithEdges.nodes);
             this.networkGraph.addEdges(nodeWithEdges.edges);
 
             this.pageLocker.unlock();

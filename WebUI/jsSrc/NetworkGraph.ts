@@ -10,12 +10,17 @@ export class NetworkGraph {
         const graphics = Viva.Graph.View.svgGraphics();
 
         graphics.node((node: VivaGraphNode<NodeModel, guid>) => {
+            const enabled = !!node.data.imageSrc;
+            
+            const color = enabled ? "#00a2e8" : "#999";
             const ui = Viva.Graph.svg("rect")
                 .attr("width", 10)
                 .attr("height", 10)
-                .attr("fill", "#00a2e8");
+                .attr("fill", color);
 
-            ui.addEventListener('click', () => onNodeClick(node));
+            if (enabled) {
+                ui.addEventListener('click', () => onNodeClick(node));
+            }
 
             return ui;
         });
@@ -43,6 +48,7 @@ export class NetworkGraph {
                 .attr('x', ((fromPos.x + toPos.x) / 2).toString())
                 .attr('y', ((fromPos.y + toPos.y) / 2).toString());
             el.textContent = linkUI.attr('data-weight');
+            el.classList.add('data-weight')
             linkUI.parentElement.appendChild(el);
         });
 

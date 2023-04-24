@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkXWrapper", "NetworkXWrapper\NetworkXWrapper.csproj", "{F2EFF7E5-B4EB-4617-A1C8-D5AC5770DA01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dal", "Dal\Dal.csproj", "{B342F5B6-87B6-4ECB-8BBE-40E21D71C35A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{F2EFF7E5-B4EB-4617-A1C8-D5AC5770DA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2EFF7E5-B4EB-4617-A1C8-D5AC5770DA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2EFF7E5-B4EB-4617-A1C8-D5AC5770DA01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B342F5B6-87B6-4ECB-8BBE-40E21D71C35A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B342F5B6-87B6-4ECB-8BBE-40E21D71C35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B342F5B6-87B6-4ECB-8BBE-40E21D71C35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B342F5B6-87B6-4ECB-8BBE-40E21D71C35A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

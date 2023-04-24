@@ -64,7 +64,7 @@ namespace VkGraphBuilder.BusinessLogic
 
         public async Task<Group> Groups_GetByIdAsync(long groupId, CancellationToken cancellationToken = default)
         {
-            groupId = -Math.Abs(groupId);
+            groupId = Math.Abs(groupId);
 
             var fetchingResult = await DistributedCache.GetOrAddArrayAsync(
                 $"{nameof(Groups_GetByIdAsync)}_{groupId}",
@@ -74,7 +74,7 @@ namespace VkGraphBuilder.BusinessLogic
 
                     var result = await vkApi.Groups.GetByIdAsync(
                         null,
-                        (-groupId).ToString(),
+                        groupId.ToString(),
                         GroupsFields.StartDate | GroupsFields.CityId | GroupsFields.MembersCount);
 
                     return result.ToArray();
@@ -97,6 +97,21 @@ namespace VkGraphBuilder.BusinessLogic
                     var users = await vkApi.Groups.GetAllMembersAsync(groupId.ToString());
 
                     return users.ToArray();
+                },
+                cancellationToken);
+        }
+        
+        public Task<Group[]> Users_GetSubscriptionsAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            return DistributedCache.GetOrAddArrayAsync(
+                $"{nameof(Users_GetSubscriptionsAsync)}_{userId}",
+                async _ =>
+                {
+                    using var vkApi = await VkApiClientFactory.GetInstanceAsync();
+
+                    var groups = await vkApi.Users.GetSubscriptionsAsync(userId);
+
+                    return groups.ToArray();
                 },
                 cancellationToken);
         }

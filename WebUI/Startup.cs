@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,7 +22,8 @@ namespace VkGraphBuilder.WebUI
         {
             services.AddControllersWithViews();
 
-            services.AddDistributedMemoryCache();
+            // services.AddDistributedMemoryCache();
+            services.AddSingleton<IDistributedCache, DistributedFileStorageCache>();
 
             services.AddSingleton<VkApiClientFactory>();
             services.AddSingleton<CachedVkApiClient>();

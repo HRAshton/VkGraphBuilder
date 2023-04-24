@@ -7,8 +7,6 @@ namespace VkGraphBuilder.BusinessLogic
     [Serializable]
     public class NodeModel
     {
-        private const bool PrivacyMode = true;
-        
         public NodeModel()
         {
         }
@@ -19,19 +17,7 @@ namespace VkGraphBuilder.BusinessLogic
             Extras = $"City: {userInfo.City?.Title}\n" +
                      $"Birthday: {userInfo.BirthDate}\n" +
                      $"Gender: {userInfo.Sex}";
-
-            if (PrivacyMode)
-            {
-                Name = new NamesGenerator().GetRandomName();
-                ImageSrc = "";
-                Link = "";
-            }
-            else
-            {
-                Name = userInfo.FirstName + " " + userInfo.LastName;
-                ImageSrc = userInfo.Photo200.ToString();
-                Link = $"https://vk.com/id{Id}";
-            }
+            Link = $"https://vk.com/id{Id}";
         }
 
         public NodeModel(Group groupInfo)
@@ -45,7 +31,7 @@ namespace VkGraphBuilder.BusinessLogic
             Link = $"https://vk.com/club{Id}";
         }
 
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         
         public string Name { get; set; }
         

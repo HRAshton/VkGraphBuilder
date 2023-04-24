@@ -4,6 +4,26 @@ namespace VkGraphBuilder.BusinessLogic
 {
     public static class GuidUtils
     {
+        public static long ToGuid(long value)
+        {
+            return value;
+        }
+
+        public static long ToLong(long guid)
+        {
+            return guid;
+        }
+
+        public static (long Min, long Max) MinMax(long guid1, long guid2)
+        {
+            return guid1.CompareTo(guid2) > 0
+                ? (guid1, guid2)
+                : (guid2, guid1);
+        }
+    }
+
+    public static class GuidUtils2
+    {
         public static Guid ToGuid(long value)
         {
             var guidData = new byte[16];
